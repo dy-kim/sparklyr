@@ -30,3 +30,27 @@ sdf_fast_bind_cols <- function(...) {
   Reduce(zip_sdf, lapply(dots, spark_dataframe)) %>%
     sdf_register()
 }
+
+names.tbl_spark <- function(x) {
+  df <- spark_dataframe(x)
+  unlist(invoke(df, "columns"))
+}
+
+`names<-.tbl_spark` <- function(x, value) {
+  sdf <- spark_dataframe(x)
+  sc <- spark_connection(sdf)
+  tblName <- sdf_table_name(x)
+
+  sanitized <- spark_sanitize_names(value)
+  df <- invoke(sdf, "toDF", as.list(sanitized))
+  invoke(df, "registerTempTable", tblName)
+  on_connection_updated(sc, tblName)
+
+  tbl(sc, tblName)
+}
+
+sdf_table_name <- function(x){
+  stopifnot(is.tbl_spark(x))
+  as.character(x$ops$x)
+}
+
