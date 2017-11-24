@@ -38,6 +38,6 @@ names.tbl_spark <- function(x) {
 
 sdf_table_name <- function(x){
   stopifnot(is.tbl_spark(x))
-  as.character(x$ops$x)
+  as.character(x$ops$x)[1L]
 }
 
