@@ -31,13 +31,14 @@ sdf_fast_bind_cols <- function(...) {
     sdf_register()
 }
 
+#' @export
 names.tbl_spark <- function(x) {
   df <- spark_dataframe(x)
   unlist(invoke(df, "columns"))
 }
 
+#' @export
 sdf_table_name <- function(x){
   stopifnot(is.tbl_spark(x))
   as.character(x$ops$x)[1L]
 }
-
